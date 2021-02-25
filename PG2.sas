@@ -265,3 +265,160 @@ data weather;
 	NewLocation=compbl(Location);
 	NewStation=compress(Station, "- ");
 run;
+
+data klasa;
+	if 0 then do;
+		set sashelp.class;
+		output;
+	end;
+run;
+
+/*laczenie danych */
+data class_grades;
+	merge sashelp.class(in=c) pg2.class_teachers(in=t);
+	by name;
+run;
+
+
+data petlaDo;
+	do i=1 to 10;
+		los=rand("integer", 1, 100);
+		output;
+	end;
+	
+
+run;
+
+
+data doWhile;
+	i=1;
+	do while(i<10);
+		los=rand("integer", 1, 100);
+		i=i+1;
+		output;
+	end;
+
+run;
+
+data doUntil;
+	i=1;
+	do while(i<10);
+		los=rand("integer", 1, 100);
+		i=i+1;
+		output;
+	end;
+run;
+
+
+***********************************************************;
+*  LESSON 6, PRACTICE 1                                   *;
+*  a) Add an iterative DO loop around the sum statement   *;
+*     for Invest.                                         *;
+*     1) Add a DO statement that creates the column Year  *;
+*        with values ranging from 1 to 6.                 *;
+*     2) Add an OUTPUT statement to show the value of the *;
+*        retirement account for each year.                *;
+*     3) Add an END statement.                            *;
+*  b) Run the program and review the results.             *;
+*  c) Add an inner iterative DO loop between the sum      *;
+*     statement and the OUTPUT statement to include the   *;
+*     accrued quarterly compounded interest based on an   *;
+*     annual interest rate of 7.5%.                       *;
+*     1) Add a DO statement that creates the column       *;
+*        Quarter with values ranging from 1 to 4.         *;
+*     2) Add a sum statement to add the accrued interest  *;
+*        to the Invest value.                             *;
+*            Invest+(Invest*(.075/4));                    *;
+*     3) Add an END statement.                            *;
+*  d) Run the program and review the results.             *;
+*  e) Drop the Quarter column. Run the program and review *;
+*     the results.                                        *;
+***********************************************************;
+
+data retirement;
+	do Year=1, 2, 3, 4, 5, 6;
+       Invest+10000;
+	   do Quarter=1, 2, 3, 4;
+		Invest=Invest+(Invest*(.075/4));
+	   end;
+		output;
+
+	end;
+drop Quarter;
+run;
+
+title1 'Retirement Account Balance per Year';
+proc print data=retirement noobs;
+    format Invest dollar12.2;
+run;
+title;
+
+
+data petlaDo;
+	do i=1 to 10;
+		los=rand("integer", 1, 100);
+		output;
+	end;
+	
+
+run;
+
+
+**************************************************;
+*  LESSON 6, PRACTICE 5                          *;
+**************************************************;
+
+data IncrExports;
+    set pg2.eu_sports;
+    where Year=2015 and Country='Belgium' 
+          and Sport_Product in ('GOLF','RACKET');
+/*	do while(Amt_Export <= Amt_Import);*/
+		  do year=2016 to 2025 while(Amt_Export <= Amt_Import);
+    	Amt_Export=Amt_Export*1.07;
+/*		Year=Year+1;*/
+		output;
+	end;
+
+    format Amt_Import Amt_Export comma12.;
+run; 
+
+title 'Belgium Golf and Racket Products - 7% Increase in Exports'; 
+proc print data=IncrExports;
+    var Sport_Product Year Amt_Import Amt_Export;
+run;
+title;
+
+
+
+/*Transpozycja kolumn*/
+
+
+proc transpose data=sashelp.class out=class;
+	id name;
+	var Height, Weight;
+	by sex;
+run;
+
+
+proc sort data=sashelp.class out=class_s;
+by age;
+run;
+
+proc transpose data=class_s out=class;
+	id name;
+	var Height Weight;
+	by age;
+run;
+
+
+proc transpose data=pg2.storm_top4_narrow prefix=Wind out=storm(drop=_NAME_);
+	id WindRank;
+	var WindMPH;
+	by Season Basin Name;
+
+run;
+
+proc transpose data=storm out=storm2 name=;
+	by Season Basin Name;
+	var Wind1-Wind4;
+run;
