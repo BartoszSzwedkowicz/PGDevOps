@@ -25,5 +25,25 @@ data np_traffic;
 run;
 
 
+%let path=/opt/sas/Workshop/danePGDevOps/PD3;
 
 
+data script;
+	infile "/opt/sas/Workshop/scripts/lesson4_practice3.sh";
+	input @'-' a :$100.;
+run;
+
+data script;
+	infile "/opt/sas/Workshop/scripts/lesson4_practice3.sh";
+	input;
+	x=_infile_;
+	backup=index(x, "back");
+run;
+
+data test;
+	
+	infile "/opt/sas/Workshop/danePGDevOps/PD3/PD3/SASApp_STPServer_2020-01-28_sasapp_18318.log" firstobs=2 dlm=' ';
+	input @'WARN';
+	x=_infile_;
+	date=input
+run;
